@@ -1,0 +1,10 @@
+# Ambiente Virtual (Evita subir gigabytes de bibliotecas)
+venv/
+
+# Credenciais e Segredos (Super crítico! Impede que suas senhas do Bluesky e chaves da AWS vazem publicamente)
+.env
+
+# Arquivos temporários do Python e do Jupyter Notebook
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
