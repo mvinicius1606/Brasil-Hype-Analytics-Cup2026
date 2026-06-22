@@ -1,0 +1,10 @@
+pandas>=2.1.0
+pyarrow>=14.0.0
+s3fs>=2023.10.0
+python-dotenv>=1.0.0
+boto3>=1.34.0
+watchtower>=3.1.0
+nltk>=3.8.1
+atproto>=0.0.45
+vaderSentiment>=3.3.2
+LeIA>=0.2
