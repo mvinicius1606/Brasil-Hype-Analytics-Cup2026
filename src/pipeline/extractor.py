@@ -54,7 +54,11 @@ class BrazilHypeWorldCup:
             {"id": 4, "nome": "Romário", "funcao": "Lenda", "termos": ["romário", "romario", "baixinho"]},
             {"id": 5, "nome": "Vinicius Júnior", "funcao": "Jogador", "termos": ["vinicius jr", "vini jr", "vinicius junior", "vinicius júnior", "vini"]},
             {"id": 6, "nome": "Neymar", "funcao": "Jogador", "termos": ["neymar jr", "neymar júnior", "neymar", "ney", "adulto ney", "menino ney"]},
+<<<<<<< HEAD
             {"id": 7, "nome": "Rodrygo", "funcao": "Jogador", "termos": ["rodrygo", "rayo"]},
+=======
+            {"id": 7, "nome": "Rodrygo", "funcao": "Jogador", "termos": ["rodrygo", "rodrygo goes", "rayo"]},
+>>>>>>> 280cc7cdf57ceb7c120d1ce633508334fb13ed3c
             {"id": 8, "nome": "Estêvão", "funcao": "Jogador", "termos": ["estêvão", "estevão", "estevao", "messinho"]},
             {"id": 9, "nome": "Endrick", "funcao": "Jogador", "termos": ["endrick"]},
             {"id": 10, "nome": "Danilo (Flamengo)", "funcao": "Jogador", "termos": ["danilo do flamengo", "danilo lateral", "danilo ex-juve", "danilo fla"]},
@@ -273,11 +277,14 @@ class BrazilHypeWorldCup:
                 comentarios = int(post.reply_count or 0) 
                 reposts = int(post.repost_count or 0)
                 
+<<<<<<< HEAD
                 # 🔥 FILTRO ANTI-FLOP DA ÁRVORE 🔥
                 # O post precisa ter no mínimo 10 likes, 4 comentários ou 1 repost. Caso contrário, é ignorado.
                 if likes < 10 and comentarios < 4 and reposts < 1:
                     continue
                 
+=======
+>>>>>>> 280cc7cdf57ceb7c120d1ce633508334fb13ed3c
                 idioma = self.identificar_idioma_e_regiao(texto)
                 nacionalidade = "Internacional" if idioma == "en" else "Nacional"
                 
@@ -322,6 +329,7 @@ class BrazilHypeWorldCup:
                     "subjetividade": subjetividade,
                     "intensidade_impacto": round(intensidade_impacto, 2)
                 })
+<<<<<<< HEAD
 
         df_obt = pd.DataFrame(registros_obt)
         logger.info(f"✨ [SUCCESS] Árvore consolidada. Total de {len(df_obt)} posts computados.")
@@ -345,4 +353,14 @@ class BrazilHypeWorldCup:
             except Exception as e:
                 logger.error(f"❌ [LOCAL] Falha ao salvar o arquivo localmente: {e}")
 
+=======
+                
+        df_obt = pd.DataFrame(registros_obt)
+        logger.info(f"✨ [SUCCESS] Árvore consolidada. Total de {len(df_obt)} posts computados.")
+        
+        # Despacho o arquivo consolidado direto para o AWS S3
+        if not df_obt.empty:
+            self.enviar_dados_s3(df_obt)
+            
+>>>>>>> 280cc7cdf57ceb7c120d1ce633508334fb13ed3c
         return df_obt
