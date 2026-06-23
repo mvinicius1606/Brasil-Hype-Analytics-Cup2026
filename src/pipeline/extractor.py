@@ -49,16 +49,12 @@ class BrazilHypeWorldCup:
         
         self.catalogo_entidades = [
             {"id": 1, "nome": "Pelé", "funcao": "Lenda", "termos": ["pelé", "pele", "rei pele", "rei pelé"]},
-            {"id": 2, "nome": "Ronaldo Fenômeno", "funcao": "Lenda", "termos": ["ronaldo", "fenomeno", "fenômeno", "r9"]},
+            {"id": 2, "nome": "Ronaldo Fenômeno", "funcao": "Lenda", "termos": ["ronaldo fenômeno", "ronaldo fenomeno", "ronaldo nazário", "ronaldo nazario", "r9"]},
             {"id": 3, "nome": "Ronaldinho Gaúcho", "funcao": "Lenda", "termos": ["ronaldinho", "gaucho", "gaúcho", "r10"]},
             {"id": 4, "nome": "Romário", "funcao": "Lenda", "termos": ["romário", "romario", "baixinho"]},
             {"id": 5, "nome": "Vinicius Júnior", "funcao": "Jogador", "termos": ["vinicius jr", "vini jr", "vinicius junior", "vinicius júnior", "vini"]},
             {"id": 6, "nome": "Neymar", "funcao": "Jogador", "termos": ["neymar jr", "neymar júnior", "neymar", "ney", "adulto ney", "menino ney"]},
-<<<<<<< HEAD
             {"id": 7, "nome": "Rodrygo", "funcao": "Jogador", "termos": ["rodrygo", "rayo"]},
-=======
-            {"id": 7, "nome": "Rodrygo", "funcao": "Jogador", "termos": ["rodrygo", "rodrygo goes", "rayo"]},
->>>>>>> 280cc7cdf57ceb7c120d1ce633508334fb13ed3c
             {"id": 8, "nome": "Estêvão", "funcao": "Jogador", "termos": ["estêvão", "estevão", "estevao", "messinho"]},
             {"id": 9, "nome": "Endrick", "funcao": "Jogador", "termos": ["endrick"]},
             {"id": 10, "nome": "Danilo (Flamengo)", "funcao": "Jogador", "termos": ["danilo do flamengo", "danilo lateral", "danilo ex-juve", "danilo fla"]},
@@ -72,7 +68,7 @@ class BrazilHypeWorldCup:
             {"id": 18, "nome": "Ibañez", "funcao": "Jogador", "termos": ["ibañez", "ibanez"]},
             {"id": 19, "nome": "Léo Pereira", "funcao": "Jogador", "termos": ["léo pereira", "leo pereira"]},
             {"id": 20, "nome": "Lucas Paquetá", "funcao": "Jogador", "termos": ["lucas paquetá", "lucas paqueta", "paquetá", "paqueta"]},
-            {"id": 21, "nome": "Bruno Guimarães", "funcao": "Jogador", "termos": ["bruno guimarães", "bruno guimaraes", "bruninho", "bg"]},
+            {"id": 21, "nome": "Bruno Guimarães", "funcao": "Jogador", "termos": ["bruno guimarães", "bruno guimaraes", "bg"]},
             {"id": 22, "nome": "Casemiro", "funcao": "Jogador", "termos": ["casemiro", "gordomiro"]},
             {"id": 23, "nome": "Alisson", "funcao": "Goleiro", "termos": ["alisson becker", "alisson"]},
             {"id": 24, "nome": "Weverton", "funcao": "Goleiro", "termos": ["weverton"]},
@@ -93,12 +89,12 @@ class BrazilHypeWorldCup:
             {"id": 39, "nome": "Éder Militão", "funcao": "Jogador", "termos": ["militão", "militao", "énder militao"]},
             {"id": 40, "nome": "Hugo Souza", "funcao": "Goleiro", "termos": ["hugo souza", "neneca"]},
             {"id": 41, "nome": "Bento", "funcao": "Goleiro", "termos": ["bento"]},
-            {"id": 42, "nome": "Brasil", "funcao": "Seleção", "termos": ["seleção brasileira", "seleção do brasil", "brasil", "brazil", "canarinho", "seleção"]},
+            {"id": 42, "nome": "Brasil", "funcao": "Seleção", "termos": ["seleção brasileira", "seleção do brasil", "brasil", "brazil", "canarinho"]},
             {"id": 43, "nome": "Tite", "funcao": "Técnico Passado", "termos": ["tite", "adenor", "tite seleção"]},
             {"id": 44, "nome": "Marrocos", "funcao": "Seleção Adversária", "termos": ["marrocos", "marrocos seleção", "moroccans", "seleção marroquina"]},
             {"id": 45, "nome": "Haiti", "funcao": "Seleção Adversária", "termos": ["haiti", "haiti seleção", "haitians", "seleção haitiana"]},
             {"id": 46, "nome": "Escócia", "funcao": "Seleção Adversária", "termos": ["escócia", "escocia", "scotland", "seleção escocesa"]},
-            {"id": 47, "nome": "Carlo Ancelotti", "funcao": "Técnico Atual", "termos": ["carlo ancelotti", "ancelotti", "carlo", "pardal"]},
+            {"id": 47, "nome": "Carlo Ancelotti", "funcao": "Técnico Atual", "termos": ["carlo ancelotti", "ancelotti", "carlo"]},
         ]
 
     def configurar_cloudwatch(self):
@@ -277,14 +273,10 @@ class BrazilHypeWorldCup:
                 comentarios = int(post.reply_count or 0) 
                 reposts = int(post.repost_count or 0)
                 
-<<<<<<< HEAD
-                # 🔥 FILTRO ANTI-FLOP DA ÁRVORE 🔥
-                # O post precisa ter no mínimo 10 likes, 4 comentários ou 1 repost. Caso contrário, é ignorado.
-                if likes < 10 and comentarios < 4 and reposts < 1:
+                # 🔥 FILTRO ANTI-FLOP DA ÁRVORE (Ajustado para dias frios) 🔥
+                if likes < 4 and comentarios < 2 and reposts < 1:
                     continue
                 
-=======
->>>>>>> 280cc7cdf57ceb7c120d1ce633508334fb13ed3c
                 idioma = self.identificar_idioma_e_regiao(texto)
                 nacionalidade = "Internacional" if idioma == "en" else "Nacional"
                 
@@ -329,7 +321,6 @@ class BrazilHypeWorldCup:
                     "subjetividade": subjetividade,
                     "intensidade_impacto": round(intensidade_impacto, 2)
                 })
-<<<<<<< HEAD
 
         df_obt = pd.DataFrame(registros_obt)
         logger.info(f"✨ [SUCCESS] Árvore consolidada. Total de {len(df_obt)} posts computados.")
@@ -353,14 +344,4 @@ class BrazilHypeWorldCup:
             except Exception as e:
                 logger.error(f"❌ [LOCAL] Falha ao salvar o arquivo localmente: {e}")
 
-=======
-                
-        df_obt = pd.DataFrame(registros_obt)
-        logger.info(f"✨ [SUCCESS] Árvore consolidada. Total de {len(df_obt)} posts computados.")
-        
-        # Despacho o arquivo consolidado direto para o AWS S3
-        if not df_obt.empty:
-            self.enviar_dados_s3(df_obt)
-            
->>>>>>> 280cc7cdf57ceb7c120d1ce633508334fb13ed3c
         return df_obt
