@@ -13,11 +13,11 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 logger = logging.getLogger("BrasilHypeBackfill")
 
 def rodar_carga_retroativa():
-    logger.info("⏳ Inicializando a engenharia de Backfill (12/06 a 21/06)...")
+    logger.info("⏳ Inicializando a engenharia de Backfill (22/06 a 28/06)...")
     
     pipeline = BrazilHypeWorldCup()
-    data_corrente = datetime.strptime("2026-06-12", "%Y-%m-%d")
-    data_fim = datetime.strptime("2026-06-21", "%Y-%m-%d")
+    data_corrente = datetime.strptime("2026-06-22", "%Y-%m-%d")
+    data_fim = datetime.strptime("2026-06-28", "%Y-%m-%d")
     
     # Lista para juntar a carga de todos os dias na memória do PC
     todos_os_dados_backfill = []
