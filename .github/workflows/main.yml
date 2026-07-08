@@ -1,38 +1,37 @@
-name: BrasilHype World Cup Daily Pipeline
+# name: BrasilHype World Cup Daily Pipeline
+# on: #Type Ignore
+#   schedule:
+#     # Executo o pipeline todos os dias às 03:00 UTC (Meia-noite no Horário de Brasília)
+#     # Isso garante a captura completa das 24 horas do dia anterior (D-1)
+#     - cron: '0 3 * * *'
+#   workflow_dispatch:
+#     # Permito o disparo manual do fluxo a qualquer momento pelo painel do GitHub Actions
 
-on:
-  schedule:
-    # Executo o pipeline todos os dias às 03:00 UTC (Meia-noite no Horário de Brasília)
-    # Isso garante a captura completa das 24 horas do dia anterior (D-1)
-    - cron: '0 3 * * *'
-  workflow_dispatch:
-    # Permito o disparo manual do fluxo a qualquer momento pelo painel do GitHub Actions
+# jobs:
+#   run-pipeline:
+#     runs-on: ubuntu-latest
 
-jobs:
-  run-pipeline:
-    runs-on: ubuntu-latest
+#     steps:
+#     - name: 🛠️ Passo 1 - Checkout do Repositório
+#       uses: actions/checkout@v3
 
-    steps:
-    - name: 🛠️ Passo 1 - Checkout do Repositório
-      uses: actions/checkout@v3
+#     - name: 🔑 Passo 2 - Configurar Credenciais AWS
+#       uses: aws-actions/configure-aws-credentials@v2
+#       with:
+#         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#         aws-region: ${{ secrets.AWS_REGION }}
 
-    - name: 🔑 Passo 2 - Configurar Credenciais AWS
-      uses: aws-actions/configure-aws-credentials@v2
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ secrets.AWS_REGION }}
+#     - name: 🐳 Passo 3 - Construir a Imagem Docker do Pipeline
+#       run: docker build -t brasilhype-pipeline:latest .
 
-    - name: 🐳 Passo 3 - Construir a Imagem Docker do Pipeline
-      run: docker build -t brasilhype-pipeline:latest .
+#     - name: 📄 Passo 4 - Criar arquivo .env a partir do secret
+#       shell: bash
+#       run: |
+#         echo "${{ secrets.ENV_FILE}}" > .env
 
-    - name: 📄 Passo 4 - Criar arquivo .env a partir do secret
-      shell: bash
-      run: |
-        echo "${{ secrets.ENV_FILE}}" > .env
-
-    - name: 🚀 Passo 5 - Executar Contêiner com .env
-      run: |
-        docker run --rm \
-          --env-file .env \
-          brasilhype-pipeline:latest
+#     - name: 🚀 Passo 5 - Executar Contêiner com .env
+#       run: |
+#         docker run --rm \
+#           --env-file .env \
+#           brasilhype-pipeline:latest

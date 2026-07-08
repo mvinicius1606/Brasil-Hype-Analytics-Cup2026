@@ -55,7 +55,7 @@ class BrazilHypeWorldCup:
             {"id": 5, "nome": "Bremer", "funcao": "Defensor", "termos": ["bremer"]},
             {"id": 6, "nome": "Bruno Guimarães", "funcao": "Meio-campista", "termos": ["bruno guimarães", "bruno guimaraes", "bg"]},
             {"id": 7, "nome": "Carlo Ancelotti", "funcao": "Técnico", "termos": ["carlo ancelotti", "ancelotti", "carlo"]},
-            {"id": 8, "nome": "Casemiro", "funcao": "Meio-campista", "termos": ["casemiro", "gordomiro"]},
+            {"id": 8, "nome": "Casemiro", "funcao": "Meio-campista", "termos": ["casemiro", "gordomiro","casimiro"]},
             {"id": 9, "nome": "Danilo (Ambíguo)", "funcao": "Defensor", "termos": ["danilo"]},
             {"id": 10, "nome": "Danilo (Flamengo)", "funcao": "Defensor", "termos": ["danilo do flamengo", "danilo lateral", "danilo ex-juve", "danilo fla"]},
             {"id": 11, "nome": "Danilo Santos", "funcao": "Meio-campista", "termos": ["danilo do botafogo", "danilo volante", "danilo botafogo", "danilo santos", "danilo fogão"]},
@@ -127,33 +127,59 @@ class BrazilHypeWorldCup:
                 params = {'q': termo, 'limit': 100}
                 if cursor_atual:
                     params['cursor'] = cursor_atual
+                
+                # ==========================================
+                # 🔄 SISTEMA DE RETRY (Tratamento de Erros 502/500 na Paginação)
+                # ==========================================
+                max_tentativas = 3
+                resultado = None
+                sucesso_paginacao = False
+                
+                for tentativa in range(1, max_tentativas + 1):
+                    try:
+                        resultado = self.client.app.bsky.feed.search_posts(params=params) # type: ignore
+                        
+                        # Verifica se o objeto retornado contém código de erro HTTP embutido
+                        if hasattr(resultado, 'status_code') and getattr(resultado, 'status_code') in [500, 502, 503, 504]:
+                            raise Exception(f"Erro {getattr(resultado, 'status_code')} no servidor Upstream.")
+                        
+                        sucesso_paginacao = True
+                        break # Requisição bem-sucedida, sai do loop de tentativas
+                        
+                    except Exception as e:
+                        logger.warning(f"⚠️ [WARN] Instabilidade na API - Termo '{termo}' (Tentativa {tentativa}/{max_tentativas}). Erro: {e}")
+                        
+                        if tentativa == max_tentativas:
+                            logger.error(f"❌ [CRITICAL] Falha definitiva na paginação de '{termo}' após {max_tentativas} tentativas. Avançando para o próximo termo.")
+                        else:
+                            tempo_espera = 5 * tentativa # Espera progressiva: 5s, 10s...
+                            logger.info(f"⏳ Servidor sobrecarregado. Pausando por {tempo_espera}s antes de tentar esta página novamente...")
+                            time.sleep(tempo_espera)
+                
+                # Se após todas as tentativas a página falhou, quebra o while deste termo e avança
+                if not sucesso_paginacao or not resultado:
+                    break
                     
-                try:
-                    resultado = self.client.app.bsky.feed.search_posts(params=params) # type: ignore
-                    time.sleep(1.5)  
+                time.sleep(1.5)  # Respeita o rate limit da API em requisições bem-sucedidas
+                
+                if not resultado.posts:
+                    break
                     
-                    if not resultado.posts:
+                for post in resultado.posts:
+                    if not hasattr(post.record, 'text') or not post.record.text.strip(): # type: ignore
+                        continue
+                        
+                    data_post = pd.to_datetime(post.record.created_at).date() # type: ignore
+                    
+                    if dt_inicio <= data_post <= dt_fim:
+                        posts_acumulados.append(post)
+                        recolhidos_termo += 1
+                        
+                    if data_post < dt_inicio:
                         break
                         
-                    for post in resultado.posts:
-                        if not hasattr(post.record, 'text') or not post.record.text.strip(): # type: ignore
-                            continue
-                            
-                        data_post = pd.to_datetime(post.record.created_at).date() # type: ignore
-                        
-                        if dt_inicio <= data_post <= dt_fim:
-                            posts_acumulados.append(post)
-                            recolhidos_termo += 1
-                            
-                        if data_post < dt_inicio:
-                            break
-                            
-                    cursor_atual = resultado.cursor
-                    if not cursor_atual or (data_post < dt_inicio):
-                        break
-                        
-                except Exception as e:
-                    logger.warning(f"⚠️ [WARN] Falha na paginação do termo '{termo}': {e}")
+                cursor_atual = resultado.cursor
+                if not cursor_atual or (data_post < dt_inicio): # type: ignore
                     break
                     
         return posts_acumulados
