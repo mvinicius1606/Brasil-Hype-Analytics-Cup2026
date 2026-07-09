@@ -1,40 +1,67 @@
 import os
 import base64
 import pandas as pd
+from io import BytesIO
+from PIL import Image, ImageDraw
 
-# 1. Altere para o caminho da pasta onde estão as suas 31 imagens
-# Substitua o final pelo nome exato da pasta onde estão as imagens
-pasta_imagens = r"C:\Users\mvini\OneDrive\Área de Trabalho\PROJETOS\Brasil-Hype-Analytics-Cup2026\dashboards\imagens entidades"
+# Caminho da pasta
+pasta_imagens = r"C:\Users\mvini\OneDrive\Área de Trabalho\PROJETOS\Brasil-Hype-Analytics-Cup2026\dashboards\assets\imagens entidades"
 
 dados = []
 extensoes_validas = ('.png', '.jpg', '.jpeg', '.webp')
 
-# 2. Percorre a pasta convertendo cada imagem
 for arquivo in os.listdir(pasta_imagens):
     if arquivo.lower().endswith(extensoes_validas):
         caminho_completo = os.path.join(pasta_imagens, arquivo)
         
-        # Identifica a extensão para montar o prefixo correto
-        ext = arquivo.split('.')[-1].lower()
-        if ext == 'jpg': 
-            ext = 'jpeg'
+        img = Image.open(caminho_completo).convert("RGBA")
+        largura, altura = img.size
         
-        with open(caminho_completo, "rb") as image_file:
-            # Converte o binário da imagem para string Base64
-            encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
+        # O Desvio da CBF (O arquivo DEVE ter "cbf" no nome)
+        if "cbf" in arquivo.lower():
+            maior_lado = max(largura, altura)
+            lado_seguro = int(maior_lado * 1.1)
             
-            # Monta a estrutura que o Power BI reconhece como imagem
-            url_base64 = f"data:image/{ext};base64,{encoded_string}"
+            img_quadrada = Image.new("RGBA", (lado_seguro, lado_seguro), (255, 255, 255, 0))
             
-            # Usa o nome do arquivo (sem a extensão) como ID/Nome correspondente
-            nome_identificador = os.path.splitext(arquivo)[0]
+            pos_x = int((lado_seguro - largura) / 2)
+            pos_y = int((lado_seguro - altura) / 2)
+            img_quadrada.paste(img, (pos_x, pos_y))
             
-            dados.append({
-                "ID_Imagem": nome_identificador,
-                "Imagem_Base64": url_base64
-            })
+            menor_lado = lado_seguro
+        else:
+            # Jogadores (Corte Central)
+            menor_lado = min(largura, altura)
+            esquerda = (largura - menor_lado) / 2
+            topo = (altura - menor_lado) / 2
+            direita = (largura + menor_lado) / 2
+            fundo = (altura + menor_lado) / 2
+            img_quadrada = img.crop((esquerda, topo, direita, fundo))
+        
+        # Máscara e Transparência
+        mascara = Image.new("L", img_quadrada.size, 0)
+        draw = ImageDraw.Draw(mascara)
+        draw.ellipse((0, 0, menor_lado, menor_lado), fill=255)
+        img_quadrada.putalpha(mascara)
+        
+        # Redução para não quebrar no Power BI (Limite de 32k)
+        img_quadrada.thumbnail((100, 100))
 
-# 3. Salva o resultado em um arquivo CSV na mesma pasta do script
+        buffer = BytesIO()
+        img_quadrada.save(buffer, format="PNG")
+        imagem_bytes = buffer.getvalue()
+        
+        # O prefixo sagrado do Base64 (Intocável)
+        encoded_string = base64.b64encode(imagem_bytes).decode('utf-8')
+        url_base64 = f"data:image/png;base64,{encoded_string}"
+        
+        nome_identificador = os.path.splitext(arquivo)[0]
+        
+        dados.append({
+            "ID_Imagem": nome_identificador,
+            "Imagem_Base64": url_base64
+        })
+
 df = pd.DataFrame(dados)
 df.to_csv("imagens_prontas_powerbi.csv", index=False, encoding="utf-8")
-print("Arquivo 'imagens_prontas_powerbi.csv' gerado com sucesso!")
+print("Processo concluído com sucesso!")
